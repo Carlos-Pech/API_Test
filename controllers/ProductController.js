@@ -61,23 +61,7 @@ const subcategory = async (req, res, next) => {
   }
 };
 
-//show the list of products
-// const index =(req, res, next)=> {
-// const limit = parseInt(req.query.limit,10) ||10;
-// const page =parseInt(req.query.page, 10) ||1;
 
-//     Product.paginate({},{page:req.query.page, limit:req.query.limit})
-//     .then(response=>{
-//     res.json({
-//         response
-//         })
-//     })
-//     .catch(error=>{
-//         res.json({
-//             message:'Error'
-//         })
-//     })
-// }
 const show = (req, res) => {
   if (req.body.error) return res.status(500).send({ error });
   if (!req.body.products) return res.status(404).send({ message: "NOT FOUND" });

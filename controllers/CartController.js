@@ -147,6 +147,7 @@ const Kilo = require("../models/Cart");
 const subschema = require("../models/subschema");
 const Product = require("../models/Product");
 const Client = require('../models/Client')
+const mongoose = require('mongoose')
 //cart movil
 
 
@@ -169,7 +170,7 @@ const addToCart = async (req, res) => {
     let cart = await Cart.findOne({ cliente: clienteId });
     if (!cart) {
       cart = new Cart({
-        cliente: clienteId,
+        cliente: mongoose.Types.ObjectId(clienteId),
         mesa: mesaId,
         Products: [
           product
@@ -185,6 +186,53 @@ const addToCart = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+const getCartProducts = async (req, res) => {
+  try {
+    const clienteId = req.params.clienteId;
+
+    const cart = await Cart.findOne({ cliente: clienteId })
+      .populate('mesa', 'nombre _id clientes')
+      .select('-__v -createdAt -updatedAt')
+      .lean();
+    
+    if (!cart) {
+      return res.status(404).json({ error: 'El carrito no existe' });
+    }
+    
+    if (!cart.mesa) {
+      return res.status(404).json({ error: 'La mesa no existe' });
+    }
+    
+    const cliente = cart.mesa.clientes.find((c) => String(c._id) === clienteId);
+    
+    if (!cliente) {
+      return res.status(404).json({ error: 'El cliente no existe' });
+    }
+    
+    const cartProducts = cart.Products;
+    const response ={
+      docs:[
+
+      ]
+    }
+    
+    res.json({
+      cliente: {
+        _id: cliente._id,
+        nombre: cliente.nombre,
+      },
+      mesa: {
+        _id: cart.mesa._id,
+        nombre: cart.mesa.nombre,
+      },
+      cartProducts,
+    });
+    
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
 
 
 const removeFromCart = async (req, res) => {
@@ -204,23 +252,6 @@ const removeFromCart = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
-const getCartProducts = async (req, res) => {
-  try {
-    const clienteId = req.params.clienteId;
-
-    const cart = await Cart.findOne({ cliente: clienteId })
-      .populate('Products') // Agregar datos de productos relacionados
-      .lean();
-
-    if (!cart) {
-      return res.status(404).json({ error: 'El carrito no existe' });
-    }
-
-    res.json(cart.Products);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-};
 
 
 
@@ -230,3 +261,5 @@ module.exports = {
   removeFromCart,
   getCartProducts
 };
+
+
