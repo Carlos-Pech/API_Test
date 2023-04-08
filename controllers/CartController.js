@@ -186,6 +186,8 @@ const addToCart = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+
+//Mostrar productos que tiene el cliente en el carrito
 const getCartProducts = async (req, res) => {
   try {
     const clienteId = req.params.clienteId;
@@ -212,21 +214,21 @@ const getCartProducts = async (req, res) => {
     const cartProducts = cart.Products;
     const response ={
       docs:[
-
+        {
+          cliente: {
+            _id: cliente._id,
+            nombre: cliente.nombre,
+          },
+          mesa: {
+            _id: cart.mesa._id,
+            nombre: cart.mesa.nombre,
+          },
+          cartProducts,
+        }
       ]
     }
     
-    res.json({
-      cliente: {
-        _id: cliente._id,
-        nombre: cliente.nombre,
-      },
-      mesa: {
-        _id: cart.mesa._id,
-        nombre: cart.mesa.nombre,
-      },
-      cartProducts,
-    });
+    res.json(response);
     
   } catch (error) {
     res.status(500).json({ error: error.message });
