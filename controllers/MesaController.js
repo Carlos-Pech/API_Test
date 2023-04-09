@@ -47,6 +47,7 @@ const liberarMesa = async (req, res) => {
         }
         mesa.status = false;
         await mesa.save();
+        
         res.status(200).json({ mensaje: "Mesa liberada", mesa });
     } catch (error) {
         console.log(error);
