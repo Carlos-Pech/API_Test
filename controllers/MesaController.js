@@ -13,6 +13,47 @@ crearMesa = async (req, res) => {
         res.status(500).json({ mensaje: "Error al crear la mesa" });
     }
 };
+// Controlador para seleccionar una mesa y actualizar su estado a "ocupada"
+const seleccionarMesa = async (req, res) => {
+    const { id } = req.params;
+
+    try {
+        const mesa = await Mesa.findById(id);
+        if (!mesa) {
+            return res.status(404).json({ mensaje: "Mesa no encontrada" });
+        }
+        if (mesa.status) {
+            return res.status(400).json({ mensaje: "La mesa ya está ocupada" });
+        }
+        mesa.status = true;
+        await mesa.save();
+        res.status(200).json({ mensaje: "Mesa seleccionada", mesa });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ mensaje: "Error al seleccionar la mesa" });
+    }
+};
+// Controlador para marcar una mesa como disponible
+const liberarMesa = async (req, res) => {
+    const { id } = req.params;
+
+    try {
+        const mesa = await Mesa.findById(id);
+        if (!mesa) {
+            return res.status(404).json({ mensaje: "Mesa no encontrada" });
+        }
+        if (!mesa.status) {
+            return res.status(400).json({ mensaje: "La mesa ya está disponible" });
+        }
+        mesa.status = false;
+        await mesa.save();
+        res.status(200).json({ mensaje: "Mesa liberada", mesa });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ mensaje: "Error al liberar la mesa" });
+    }
+};
+
 
 // Controlador para agregar un nuevo cliente a una mesa existente
 const agregarCliente = async (req, res) => {
@@ -150,5 +191,7 @@ module.exports = {
     eliminarCliente,
     eliminarMesa,
     editarCliente,
-    getMesas
+    getMesas,
+    seleccionarMesa,
+    liberarMesa
 };

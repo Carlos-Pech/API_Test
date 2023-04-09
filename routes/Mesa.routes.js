@@ -11,5 +11,6 @@ router.get('/obtener/:id',mesaController.getMesaById)
 router.delete("/mesas/:mesaId/clientes/:clienteId",mesaController.eliminarCliente)//Elimminar cliente de una mesa
 router.delete('/mesas/:id',mesaController.eliminarMesa)//ELiminar una mesa
 router.put('/mesas/:idMesa/clientes/:idCliente',mesaController.editarCliente)
-
+router.put('/mesas/:id/seleccionar', mesaController.seleccionarMesa)
+router.put('/mesas/:id/liberar', mesaController.liberarMesa)
 module.exports = router;

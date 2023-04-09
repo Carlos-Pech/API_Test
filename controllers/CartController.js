@@ -210,7 +210,6 @@ const getCartProducts = async (req, res) => {
     if (!cliente) {
       return res.status(404).json({ error: 'El cliente no existe' });
     }
-    
     const cartProducts = cart.Products;
     const response ={
       docs:
