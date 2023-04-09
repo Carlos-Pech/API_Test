@@ -213,7 +213,7 @@ const getCartProducts = async (req, res) => {
     
     const cartProducts = cart.Products;
     const response ={
-      docs:[
+      docs:
         {
           cliente: {
             _id: cliente._id,
@@ -225,7 +225,7 @@ const getCartProducts = async (req, res) => {
           },
           cartProducts,
         }
-      ]
+      
     }
     
     res.json(response);

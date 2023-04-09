@@ -65,6 +65,7 @@ const swaggerDocs = (app, port) => {
 
     console.log(`Documentacion con Swagger local: http://localhost:3050/api-docs/#/`);
     console.log(`Documentacion con Swagger produccion: http://api-foodmet.up.railway.app/api-docs/#/`);
+    console.log('API en produccion:  https://api-foodmet.up.railway.app/api/product/')
 
 }
 module.exports = { swaggerDocs };

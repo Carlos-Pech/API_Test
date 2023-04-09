@@ -82,13 +82,17 @@ const getMesaById = async (req, res) => {
 const getMesas = async (req, res) => {
     try {
         const mesas = await Mesa.find().populate("clientes");
-        res.status(200).json(mesas);
+        const response={
+            docs:
+                mesas
+            
+        }
+        res.json(response);
     } catch (error) {
         console.log(error);
         res.status(500).json({ mensaje: "Error al obtener las mesas" });
     }
 };
-  
 
 //Eliminar cliente de una mesa 
 const eliminarCliente = async (req, res) => {
