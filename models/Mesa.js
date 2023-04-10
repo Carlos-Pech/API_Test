@@ -11,7 +11,7 @@ const mesaSchema = new mongoose.Schema({
             required: true
         }
     }],
-    seleccionado: {
+    status: {
         type: Boolean,
         default: false
     }
