@@ -4,21 +4,23 @@ const MesaSelect =require('../models/SelectMesa')
 
 
 
-// Controlador para crear una nueva mesa
 const crearMesa = async (req, res) => {
     const { nombre } = req.body;
 
     try {
         const mesa = await Mesa.create({ 
             nombre, 
-            mesaSeleccionada: '' // Agregar campo mesaSeleccionada
+            mesaSeleccionada: 'Disponible' // Agregar campo mesaSeleccionada
         });
-        res.status(201).json({ mensaje: "Mesa creada", mesa });
+        res.status(201).json({
+            docs: [mesa.toJSON()]
+        });
     } catch (error) {
         console.log(error);
         res.status(500).json({ mensaje: "Error al crear la mesa" });
     }
 };
+
 
 // Controlador para seleccionar una mesa
 const selectTable = async (req, res) => {

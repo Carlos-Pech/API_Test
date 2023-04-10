@@ -17,7 +17,7 @@ const mesaSchema = new mongoose.Schema({
     },
     mesaSeleccionada: {
         type: String,
-        default: 'Disponible'
+        
     }
 });
 
