@@ -37,6 +37,28 @@ const selectTable = async (req, res) => {
         res.status(500).json({ mensaje: "Error al seleccionar la mesa" });
     }
 };
+// Controlador para marcar una mesa como disponible
+const liberarMesa = async (req, res) => {
+    const { id } = req.params;
+
+    try {
+        const mesa = await Mesa.findById(id);
+        if (!mesa) {
+            return res.status(404).json({ mensaje: "Mesa no encontrada" });
+        }
+        if (!mesa.status) {
+            return res.status(400).json({ mensaje: "La mesa ya está disponible" });
+        }
+        mesa.status = false;
+        mesa.mesaSeleccionada = 'Disponible';
+        await mesa.save();
+        
+        res.status(200).json({ mensaje: "Mesa liberada", mesa });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ mensaje: "Error al liberar la mesa" });
+    }
+};
 
 
 //este aun no esta bien
@@ -59,31 +81,6 @@ const seleccionarMesa = async (req, res) => {
     } catch (error) {
         console.log(error);
         res.status(500).json({ mensaje: "Error al seleccionar la mesa" });
-    }
-};
-// Controlador para marcar una mesa como disponible
-const liberarMesa = async (req, res) => {
-    const { id } = req.params;
-
-    try {
-        const mesa = await Mesa.findById(id);
-        if (!mesa) {
-            return res.status(404).json({ mensaje: "Mesa no encontrada" });
-        }
-        if (!mesa.status) {
-            return res.status(400).json({ mensaje: "La mesa ya está disponible" });
-        }
-        if (mesa.mesaSeleccionada && mesa.mesaSeleccionada !== mesa.nombre) {
-            return res.status(400).json({ mensaje: "La mesa aún está seleccionada por otro cliente" });
-        }
-        mesa.status = false;
-        mesa.mesaSeleccionada = '';
-        await mesa.save();
-        
-        res.status(200).json({ mensaje: "Mesa liberada", mesa });
-    } catch (error) {
-        console.log(error);
-        res.status(500).json({ mensaje: "Error al liberar la mesa" });
     }
 };
 
