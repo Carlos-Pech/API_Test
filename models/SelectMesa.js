@@ -11,12 +11,12 @@ const mesaSchema = new mongoose.Schema({
             required: true
         }
     }],
-    seleccionado: {
+    status: {
         type: Boolean,
         default: false
     }
 });
 
-const Mesa = mongoose.model('Mesa', mesaSchema);
+const MesaSelect = mongoose.model('MesaSelect', mesaSchema);
 
-module.exports = Mesa;
+module.exports = MesaSelect;

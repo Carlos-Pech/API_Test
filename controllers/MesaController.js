@@ -1,5 +1,6 @@
 const Mesa = require("../models/Mesa");
 const Cart = require('../models/Cart2')
+const MesaSelect =require('../models/SelectMesa')
 
 // Controlador para crear una nueva mesa
 crearMesa = async (req, res) => {
@@ -27,7 +28,7 @@ const seleccionarMesa = async (req, res) => {
         }
         mesa.status = true;
         await mesa.save();
-        res.status(200).json({ mensaje: "Mesa seleccionada", mesa });
+        res.status(200).json({ mensaje: "Mesa seleccionada", mesa, id });
     } catch (error) {
         console.log(error);
         res.status(500).json({ mensaje: "Error al seleccionar la mesa" });
@@ -135,6 +136,36 @@ const getMesas = async (req, res) => {
         res.status(500).json({ mensaje: "Error al obtener las mesas" });
     }
 };
+// Controlador para guardar la mesa seleccionada por el usuario
+const guardarMesaSeleccionada = async (req, res) => {
+    const { id } = req.params;
+
+    try {
+        // Primero, obtén la mesa correspondiente al ID enviado por el cliente
+        const mesaOriginal = await Mesa.findById(id);
+
+        if (!mesaOriginal) {
+            return res.status(404).json({ mensaje: "La mesa seleccionada no existe" });
+        }
+
+        // Crea una copia de la mesa en el modelo MesaSelect y agrega sus clientes
+        const mesaSelect = await MesaSelect.create({
+            nombre: mesaOriginal.nombre,
+            clientes: mesaOriginal.clientes,
+            status: true
+        });
+
+        // Actualiza el estado de la mesa original a "ocupado"
+        mesaOriginal.status = true;
+        await mesaOriginal.save();
+
+        res.status(200).json({ mensaje: "Mesa seleccionada guardada con éxito", mesaSelect });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ mensaje: "Error al guardar la mesa seleccionada" });
+    }
+};
+
 
 //Eliminar cliente de una mesa 
 const eliminarCliente = async (req, res) => {
@@ -194,5 +225,6 @@ module.exports = {
     editarCliente,
     getMesas,
     seleccionarMesa,
-    liberarMesa
+    liberarMesa,
+    guardarMesaSeleccionada
 };
