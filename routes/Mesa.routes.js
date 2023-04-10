@@ -14,4 +14,8 @@ router.delete('/mesas/:id',mesaController.eliminarMesa)//ELiminar una mesa
 router.put('/mesas/:idMesa/clientes/:idCliente',mesaController.editarCliente)
 router.put('/mesas/:id/seleccionar', mesaController.seleccionarMesa)
 router.put('/mesas/:id/liberar', mesaController.liberarMesa)
+
+
+// pruebas para elejir mesa
+router.post('/mesa/seleccionar', mesaController.selectTable);
 module.exports = router;

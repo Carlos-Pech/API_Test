@@ -14,6 +14,10 @@ const mesaSchema = new mongoose.Schema({
     status: {
         type: Boolean,
         default: false
+    },
+    mesaSeleccionada: {
+        type: String,
+        default: 'Disponible'
     }
 });
 
