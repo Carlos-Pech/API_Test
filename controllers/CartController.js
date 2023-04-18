@@ -148,15 +148,13 @@ const subschema = require("../models/subschema");
 const Product = require("../models/Product");
 const Client = require('../models/Client')
 const mongoose = require('mongoose')
+const Mesa = require('../models/Mesa')
 //cart movil
-
-
 
 const addToCart = async (req, res) => {
   try {
-    const clienteId = req.params.clienteId;
-    const productId = req.params.id;
     const mesaId = req.params.mesaId;
+    const productId = req.params.id;
 
     const product = await Product.findById(productId)
       .select('-__v -createdAt -updatedAt') // Excluir campos que no se necesitan
@@ -167,19 +165,34 @@ const addToCart = async (req, res) => {
       return res.status(404).json({ error: 'El producto no existe' });
     }
 
-    let cart = await Cart.findOne({ cliente: clienteId });
-    if (!cart) {
+    let mesa = await Mesa.findOne({ _id: mesaId });
+    let cart;
+
+    if (!mesa) {
+      mesa = new Mesa({ _id: mesaId });
+      await mesa.save();
+
       cart = new Cart({
-        cliente: mongoose.Types.ObjectId(clienteId),
-        mesa: mesaId,
+        mesa: mesa._id,
         Products: [
           product
         ]
       });
     } else {
-      cart.mesa = mesaId;
-      cart.Products.push(product);
+      cart = await Cart.findOne({ mesa: mesa._id });
+
+      if (!cart) {
+        cart = new Cart({
+          mesa: mesa._id,
+          Products: [
+            product
+          ]
+        });
+      } else {
+        cart.Products.push(product);
+      }
     }
+
     await cart.save();
     res.json(cart);
   } catch (error) {
@@ -187,52 +200,39 @@ const addToCart = async (req, res) => {
   }
 };
 
-//Mostrar productos que tiene el cliente en el carrito
+
+// Mostrar productos que tiene el carrito de la mesa
 const getCartProducts = async (req, res) => {
   try {
-    const clienteId = req.params.clienteId;
+    const mesaId = req.params.mesaId;
 
-    const cart = await Cart.findOne({ cliente: clienteId })
-      .populate('mesa', 'nombre _id clientes')
+    const cart = await Cart.findOne({ mesa: mesaId })
+      .populate('mesa', 'nombre _id')
       .select('-__v -createdAt -updatedAt')
       .lean();
-    
+
     if (!cart) {
       return res.status(404).json({ error: 'El carrito no existe' });
     }
-    
-    if (!cart.mesa) {
-      return res.status(404).json({ error: 'La mesa no existe' });
-    }
-    
-    const cliente = cart.mesa.clientes.find((c) => String(c._id) === clienteId);
-    
-    if (!cliente) {
-      return res.status(404).json({ error: 'El cliente no existe' });
-    }
+
     const cartProducts = cart.Products;
-    const response ={
-      docs:
-        {
-          cliente: {
-            _id: cliente._id,
-            nombre: cliente.nombre,
-          },
-          mesa: {
-            _id: cart.mesa._id,
-            nombre: cart.mesa.nombre,
-          },
-          cartProducts,
-        }
-      
-    }
-    
+    const response = {
+      docs: {
+        mesa: {
+          _id: cart.mesa._id,
+          nombre: cart.mesa.nombre,
+        },
+        cartProducts,
+      },
+    };
+
     res.json(response);
-    
+
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 };
+
 
 
 

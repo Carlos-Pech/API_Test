@@ -14,8 +14,8 @@ const express = require('express');
 const router = express.Router();
 const cartController = require('../controllers/CartController');
 
-router.get('/cart/:clienteId', cartController.getCartProducts);
-router.post('/mesas/:mesaId/clientes/:clienteId/cart/:id', cartController.addToCart);
+router.get('/mesas/:mesaId/cart', cartController.getCartProducts);
+router.post('/mesas/:mesaId/cart/:id', cartController.addToCart);
 // router.delete('/cart/:id', cartController.removeFromCart);
 // router.get('/find/:id', cartController.getCartById);
 // router.put('/cart/:id', cartController.updateCart);

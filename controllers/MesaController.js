@@ -142,7 +142,10 @@ const getMesaById = async (req, res) => {
         return res.status(404).json({ mensaje: "Mesa no encontrada" });
         }
 
-        res.status(200).json(mesa);
+        response ={
+            docs:{mesa}
+        }
+        res.status(200).json(response);
     } catch (error) {
         console.log(error);
         res.status(500).json({ mensaje: "Error al obtener la mesa" });
@@ -152,7 +155,7 @@ const getMesaById = async (req, res) => {
 // obtener las mesas cons sus clientes
 const getMesas = async (req, res) => {
     try {
-        const mesas = await Mesa.find().populate("clientes");
+        const mesas = await Mesa.find();
         const response={
             docs:
                 mesas
